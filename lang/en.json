@@ -1,0 +1,6 @@
+{
+    "I18N.MAINTAINERS": ["delVhar"],
+    "illumination.darknessThreshold.name": "Global Illumination Darkness Threshold",
+    "illumination.darknessThreshold.hist": "The scene darkness level at which global illumination is deactivated. Must be between 0 and 1"
+
+}

@@ -1,0 +1,16 @@
+{
+    "name": "illumination",
+    "title": "Illumination - Link Global Illumination with Day/Night",
+    "description": "Link Day/Night lighting with Global Illumination, so that it activates/deactivates based on a threshold.",
+    "author": "delVhar",
+    "version": "1.0.0",
+    "minimumCoreVersion": "0.6.4",
+    "scripts": ["scripts/illumination.js"],
+    "languages": [
+		{
+			"lang": "en",
+			"name": "English",
+			"path": "lang/en.json"
+        }
+    ]
+  }
