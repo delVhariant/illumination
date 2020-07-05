@@ -3,7 +3,7 @@
     "title": "Illumination",
     "description": "Add buttons for dawn and dusk, and make scene lighting impact token vision range.",
     "author": "delVhar",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "minimumCoreVersion": "0.6.4",
     "scripts": ["scripts/illumination.js"],
     "languages": [
@@ -15,5 +15,5 @@
     ],
     "url": "https://github.com/delVhariant/illumination",
     "manifest": "https://raw.githubusercontent.com/delVhariant/illumination/master/module.json",
-    "download": "https://github.com/delVhariant/illumination/archive/master.zip"
+    "download": "https://github.com/delVhariant/illumination/zipball/master"
   }
