@@ -1,6 +1,16 @@
 {
     "I18N.MAINTAINERS": ["delVhar"],
     "illumination.darknessThreshold.name": "Global Illumination Darkness Threshold",
-    "illumination.darknessThreshold.hist": "The scene darkness level at which global illumination is deactivated. Must be between 0 and 1"
+    "illumination.darknessThreshold.hist": "The scene darkness level at which global illumination is deactivated. Must be between 0 and 1",
+    "illumination.showDawnDusk.name": "Show Lighting Options for Dawn/Dusk", 
+    "illumination.showDawnDusk.hint": "Should buttons be shown in the lighting toolbar to switch to Dawn/Dusk",
+    "illumination.nightColor.name": "Night Color", 
+    "illumination.nightColor.hint": "The lighting overlay color for Night. Use hex color reference (ie: #3c3351)", 
+    "illumination.dawnColor.name": "Dawn Color", 
+    "illumination.dawnColor.hint": "The lighting overlay color for Dawn. Use hex color reference (ie: #db9f6d)", 
+    "illumination.duskColor.name": "Dusk Color", 
+    "illumination.duskColor.hint": "The lighting overlay color for Dusk. Use hex color reference (ie: ##ae6b6b)",
+    "illumination.dayColor.name": "Day Color", 
+    "illumination.dayColor.hint": "The lighting overlay color for Day"
 
 }

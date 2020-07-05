@@ -1,7 +1,7 @@
 {
     "name": "illumination",
-    "title": "Illumination - Link Global Illumination with Day/Night",
-    "description": "Link Day/Night lighting with Global Illumination, so that it activates/deactivates based on a threshold.",
+    "title": "Illumination",
+    "description": "Add buttons for dawn and dusk, and make scene lighting impact token vision range.",
     "author": "delVhar",
     "version": "1.0.0",
     "minimumCoreVersion": "0.6.4",
