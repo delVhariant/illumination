@@ -1,29 +1,38 @@
-
-
-Hooks.on('ready', () => {
-    Hooks.on('updateScene', (scene, darkness, anim, token) => {
-        if(anim.diff && darkness.hasOwnProperty("darkness"))
+function toggleGlobalLight(darkness)
+{
+    if(game.settings.get("illumination","linkGlobalLight"))
+    {
+        if(darkness >= game.settings.get("illumination","darknessThreshold"))
         {
-            if(darkness.darkness >= game.settings.get("illumination","darknessThreshold")) // Night
+            if(canvas.scene.darkness.globalLight)
             {
-                //scene.setFlag("core","darknessColor", game.settings.get("illumination","nightColor"))
-                if(scene.data.globalLight)
-                    scene.update({globalLight: false})
-            }
-            else if(!scene.data.globalLight)
-            {
-                scene.update({globalLight: true})
+                return {globalLight: false}
             }
         }
-    });
-});
+        else if(!canvas.scene.darkness.globalLight)
+        {
+            return {globalLight: true}
+        }
+    }
+    return null;
+}
 
 Hooks.on('getSceneControlButtons', controls => {
     let control = controls.find(c => c.name === "lighting") || controls[5];
 
+    // Day Button override
+    control.tools[1].onClick = () =>
+    {
+        var level=game.settings.get("illumination","dayLevel");
+        canvas.scene.update({darkness: level}, {animateDarkness: true}, toggleGlobalLight(level))
+        canvas.scene.setFlag("core","darknessColor", game.settings.get("illumination","dayColor"))
+    }
+
+    // Night Button Override
     control.tools[2].onClick = () =>
     {
-        canvas.scene.update({darkness: 1}, {animateDarkness: true})
+        var level=game.settings.get("illumination","nightLevel");
+        canvas.scene.update({darkness: level}, {animateDarkness: true}, toggleGlobalLight(level))
         canvas.scene.setFlag("core","darknessColor", game.settings.get("illumination","nightColor"))
     }
 
@@ -33,7 +42,8 @@ Hooks.on('getSceneControlButtons', controls => {
 		icon: "far fa-moon",
 		visible: game.settings.get("illumination", "showDawnDusk"),
 		onClick: () => {
-            canvas.scene.update({darkness: 0.75}, {animateDarkness: true})
+            var level=game.settings.get("illumination","duskLevel");
+            canvas.scene.update({darkness: level}, {animateDarkness: true}, toggleGlobalLight(level))
             canvas.scene.setFlag("core","darknessColor", game.settings.get("illumination","duskColor"))
         }
 	});
@@ -43,7 +53,8 @@ Hooks.on('getSceneControlButtons', controls => {
 		icon: "far fa-sun",
 		visible: game.settings.get("illumination", "showDawnDusk"),
 		onClick: () => {
-            canvas.scene.update({darkness: 0.5}, {animateDarkness: true});
+            var level=game.settings.get("illumination","dawnLevel");
+            canvas.scene.update({darkness: level}, {animateDarkness: true}, toggleGlobalLight(level))
             canvas.scene.setFlag("core","darknessColor", game.settings.get("illumination","dawnColor"));
         }
 	});
@@ -51,15 +62,27 @@ Hooks.on('getSceneControlButtons', controls => {
 });
 
 Hooks.once("init", () => {
-	
-	game.settings.register("illumination", "darknessThreshold", {
-		name: game.i18n.localize("illumination.darknessThreshold.name"),
-		hint: game.i18n.localize("illumination.darknessThreshold.hint"),
+
+    game.settings.register("illumination", "linkGlobalLight", {
+		name: game.i18n.localize("illumination.linkGlobalLight.name"),
+		hint: game.i18n.localize("illumination.linkGlobalLight.hint"),
 		scope: "world",
 		config: true,
-		default: 1,
-		type: Number
+		default: true,
+		type: Boolean
     });
+    if(game.settings.get("illumination", "linkGlobalLight"))
+    {
+        game.settings.register("illumination", "darknessThreshold", {
+            name: game.i18n.localize("illumination.darknessThreshold.name"),
+            hint: game.i18n.localize("illumination.darknessThreshold.hint"),
+            scope: "world",
+            config: true,
+            default: 1.0,
+            type: Number,
+            range: {min: 0.0, max: 1.0, step: 0.05}
+        });
+    }
     game.settings.register("illumination", "showDawnDusk", {
 		name: game.i18n.localize("illumination.showDawnDusk.name"),
 		hint: game.i18n.localize("illumination.showDawnDusk.hint"),
@@ -68,7 +91,70 @@ Hooks.once("init", () => {
 		default: true,
 		type: Boolean
     });
+
+    if(game.settings.get("illumination", "showDawnDusk"))
+    {    
+        game.settings.register("illumination", "dawnColor", {
+            name: game.i18n.localize("illumination.dawnColor.name"),
+            hint: game.i18n.localize("illumination.dawnColor.hint"),
+            scope: "world",
+            config: true,
+            default: "#db9f6d",
+            type: String
+        });
+        
+
+        game.settings.register("illumination", "dawnLevel", {
+            name: game.i18n.localize("illumination.dawnLevel.name"),
+            hint: game.i18n.localize("illumination.dawnLevel.hint"),
+            scope: "world",
+            config: true,
+            default: 0.75,
+            type: Number,
+            range: {min: 0.0, max: 1.0, step: 0.05}
+        });
+    }
+
+    game.settings.register("illumination", "dayColor", {
+		name: game.i18n.localize("illumination.dayColor.name"),
+		hint: game.i18n.localize("illumination.dayColor.hint"),
+		scope: "world",
+		config: true,
+		default: "#FFFEFE",
+		type: String
+    });
     
+    game.settings.register("illumination", "dayLevel", {
+		name: game.i18n.localize("illumination.dayLevel.name"),
+		hint: game.i18n.localize("illumination.dayLevel.hint"),
+		scope: "world",
+		config: true,
+		default: 0,
+		type: Number,
+        range: {min: 0.0, max: 1.0, step: 0.05}
+    });
+    
+    if(game.settings.get("illumination", "showDawnDusk"))
+    {
+        game.settings.register("illumination", "duskColor", {
+            name: game.i18n.localize("illumination.duskColor.name"),
+            hint: game.i18n.localize("illumination.duskColor.hint"),
+            scope: "world",
+            config: true,
+            default: "#ae6b6b",
+            type: String
+        });
+
+        game.settings.register("illumination", "duskLevel", {
+            name: game.i18n.localize("illumination.duskLevel.name"),
+            hint: game.i18n.localize("illumination.duskLevel.hint"),
+            scope: "world",
+            config: true,
+            default: 0.75,
+            type: Number,
+            range: {min: 0.0, max: 1.0, step: 0.05}
+        });
+    }
     game.settings.register("illumination", "nightColor", {
 		name: game.i18n.localize("illumination.nightColor.name"),
 		hint: game.i18n.localize("illumination.nightColor.hint"),
@@ -76,24 +162,17 @@ Hooks.once("init", () => {
 		config: true,
 		default: "#3c3351",
 		type: String
-    });
-    
-    game.settings.register("illumination", "dawnColor", {
-		name: game.i18n.localize("illumination.dawnColor.name"),
-		hint: game.i18n.localize("illumination.dawnColor.hint"),
+    }); 
+
+    game.settings.register("illumination", "nightLevel", {
+		name: game.i18n.localize("illumination.nightLevel.name"),
+		hint: game.i18n.localize("illumination.nightLevel.hint"),
 		scope: "world",
 		config: true,
-		default: "#db9f6d",
-		type: String
+		default: 1,
+		type: Number,
+        range: {min: 0.0, max: 1.0, step: 0.05}
     });
     
-    game.settings.register("illumination", "duskColor", {
-		name: game.i18n.localize("illumination.duskColor.name"),
-		hint: game.i18n.localize("illumination.duskColor.hint"),
-		scope: "world",
-		config: true,
-		default: "#ae6b6b",
-		type: String
-	});
 });
 console.log("Illumination is loaded.")

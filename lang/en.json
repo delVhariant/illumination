@@ -1,16 +1,26 @@
 {
     "I18N.MAINTAINERS": ["delVhar"],
+    "illumination.linkGlobalLight.name": "Link Global Illumination",
+    "illumination.linkGlobalLight.hist": "Should the Global Illumination setting be changed based on scene darkness?",
     "illumination.darknessThreshold.name": "Global Illumination Darkness Threshold",
     "illumination.darknessThreshold.hist": "The scene darkness level at which global illumination is deactivated. Must be between 0 and 1",
     "illumination.showDawnDusk.name": "Show Lighting Options for Dawn/Dusk", 
     "illumination.showDawnDusk.hint": "Should buttons be shown in the lighting toolbar to switch to Dawn/Dusk",
     "illumination.nightColor.name": "Night Color", 
     "illumination.nightColor.hint": "The lighting overlay color for Night. Use hex color reference (ie: #3c3351)", 
+    "illumination.nightLevel.name": "Night Darkness Level", 
+    "illumination.nightLevel.hint": "The darkness level to set when Night is selected. If global illumination linking is enabled this will determine whether it is off at Night.", 
     "illumination.dawnColor.name": "Dawn Color", 
     "illumination.dawnColor.hint": "The lighting overlay color for Dawn. Use hex color reference (ie: #db9f6d)", 
+    "illumination.dawnLevel.name": "Dawn Darkness Level", 
+    "illumination.dawnLevel.hint": "The darkness level to set when Dawn is selected. If global illumination linking is enabled this will determine whether it is off at Dawn.", 
     "illumination.duskColor.name": "Dusk Color", 
-    "illumination.duskColor.hint": "The lighting overlay color for Dusk. Use hex color reference (ie: ##ae6b6b)",
+    "illumination.duskColor.hint": "The lighting overlay color for Dusk. Use hex color reference (ie: #ae6b6b)",
+    "illumination.duskLevel.name": "Night Darkness Level", 
+    "illumination.duskLevel.hint": "The darkness level to set when Dusk is selected. If global illumination linking is enabled this will determine whether it is off at Dusk.", 
     "illumination.dayColor.name": "Day Color", 
-    "illumination.dayColor.hint": "The lighting overlay color for Day"
+    "illumination.dayColor.hint": "The lighting overlay color for Day. Use hex color reference (ie: #FFFEFE)",
+    "illumination.dayLevel.name": "Night Darkness Level", 
+    "illumination.dayLevel.hint": "The darkness level to set when Day is selected. If global illumination linking is enabled this will determine whether it is off at Day."
 
 }
