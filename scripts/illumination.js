@@ -4,7 +4,7 @@ Hooks.on('ready', () => {
     Hooks.on('preUpdateScene', (scene, darkness, anim, token) => {
         if(darkness.darkness && anim.diff)
         {
-            if(darkness.darkness == 0.25) // Dawn
+            /*if(darkness.darkness == 0.5) // Dawn
             {
                 scene.setFlag("core","darknessColor", game.settings.get("illumination","dawnColor"))
             }
@@ -12,7 +12,7 @@ Hooks.on('ready', () => {
             {
                 scene.setFlag("core","darknessColor", game.settings.get("illumination","duskColor"))
             }
-            else if(darkness.darkness == 1) // Dusk
+            else */if(darkness.darkness == 1) // Night
             {
                 scene.setFlag("core","darknessColor", game.settings.get("illumination","nightColor"))
             }
@@ -24,17 +24,23 @@ Hooks.on('getSceneControlButtons', controls => {
     let control = controls.find(c => c.name === "lighting") || controls[5];
     control.tools.splice(2, 0, {
 		name: "dusk",
-		title: "dusk",
-		icon: "fas fa-sun-o",
+		title: "Transition to Dusk",
+		icon: "far fa-moon",
 		visible: game.settings.get("illumination", "showDawnDusk"),
-		onClick: () => canvas.scene.update({darkness: 0.75}, {animateDarkness: true}),
+		onClick: () => {
+            canvas.scene.update({darkness: 0.75}, {animateDarkness: true})
+            scene.setFlag("core","darknessColor", game.settings.get("illumination","duskColor"))
+        }
 	});
     control.tools.splice(1, 0, {
 		name: "dawn",
-		title: "dawn",
-		icon: "fas fa-moon-o",
+		title: "Transition to Dawn",
+		icon: "far fa-sun",
 		visible: game.settings.get("illumination", "showDawnDusk"),
-		onClick: () => canvas.scene.update({darkness: 0.25}, {animateDarkness: true}),
+		onClick: () => {
+            canvas.scene.update({darkness: 0.5}, {animateDarkness: true});
+            canvas.scene.setFlag("core","darknessColor", game.settings.get("illumination","dawnColor"));
+        }
 	});
 
 });
