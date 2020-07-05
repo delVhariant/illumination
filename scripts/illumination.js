@@ -2,19 +2,17 @@
 
 Hooks.on('ready', () => {
     Hooks.on('preUpdateScene', (scene, darkness, anim, token) => {
-        if(darkness.darkness && anim.diff)
+        if(anim.diff)
         {
-            /*if(darkness.darkness == 0.5) // Dawn
-            {
-                scene.setFlag("core","darknessColor", game.settings.get("illumination","dawnColor"))
-            }
-            else if(darkness.darkness == 0.75) // Dusk
-            {
-                scene.setFlag("core","darknessColor", game.settings.get("illumination","duskColor"))
-            }
-            else */if(darkness.darkness == 1) // Night
+            if(darkness.darkness == game.settings.get("illumination","darknessThreshold")) // Night
             {
                 scene.setFlag("core","darknessColor", game.settings.get("illumination","nightColor"))
+                if(scene.globalLight)
+                    scene.update({globalLight: false})
+            }
+            else if(!scene.globalLight)
+            {
+                scene.update({globalLight: true})
             }
         }
     });
@@ -29,7 +27,7 @@ Hooks.on('getSceneControlButtons', controls => {
 		visible: game.settings.get("illumination", "showDawnDusk"),
 		onClick: () => {
             canvas.scene.update({darkness: 0.75}, {animateDarkness: true})
-            scene.setFlag("core","darknessColor", game.settings.get("illumination","duskColor"))
+            canvas.scene.setFlag("core","darknessColor", game.settings.get("illumination","duskColor"))
         }
 	});
     control.tools.splice(1, 0, {
@@ -47,14 +45,14 @@ Hooks.on('getSceneControlButtons', controls => {
 
 Hooks.once("init", () => {
 	
-	/*game.settings.register("illumination", "darknessThreshold", {
+	game.settings.register("illumination", "darknessThreshold", {
 		name: game.i18n.localize("illumination.darknessThreshold.name"),
 		hint: game.i18n.localize("illumination.darknessThreshold.hint"),
 		scope: "world",
 		config: true,
 		default: 1,
 		type: Number
-    });*/
+    });
     game.settings.register("illumination", "showDawnDusk", {
 		name: game.i18n.localize("illumination.showDawnDusk.name"),
 		hint: game.i18n.localize("illumination.showDawnDusk.hint"),
