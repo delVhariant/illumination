@@ -2,7 +2,7 @@
 
 Hooks.on('ready', () => {
     Hooks.on('updateScene', (scene, darkness, anim, token) => {
-        if(anim.diff && darkness.hasOwnPropery("darkness"))
+        if(anim.diff && darkness.hasOwnProperty("darkness"))
         {
             if(darkness.darkness >= game.settings.get("illumination","darknessThreshold")) // Night
             {
