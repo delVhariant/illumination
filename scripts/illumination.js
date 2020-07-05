@@ -1,5 +1,7 @@
-function toggleGlobalLight(darkness, globalLight)
+function toggleGlobalLight(darkness)
 {
+    console.log(`Changing darkness to ${darkness}. GI threshold is ${canvas.scene.data.globalLight}`);
+    
     if(game.settings.get("illumination","linkGlobalLight"))
     {
         if(darkness >= game.settings.get("illumination","darknessThreshold"))
@@ -14,7 +16,7 @@ function toggleGlobalLight(darkness, globalLight)
             return {globalLight: true}
         }
     }
-    return null;
+    //return null;
 }
 
 Hooks.on('getSceneControlButtons', controls => {
