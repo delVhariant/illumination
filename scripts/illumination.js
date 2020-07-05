@@ -1,12 +1,12 @@
 
 
 Hooks.on('ready', () => {
-    Hooks.on('preUpdateScene', (scene, darkness, anim, token) => {
+    Hooks.on('updateScene', (scene, darkness, anim, token) => {
         if(anim.diff)
         {
-            if(darkness.darkness == game.settings.get("illumination","darknessThreshold")) // Night
+            if(darkness.darkness >= game.settings.get("illumination","darknessThreshold")) // Night
             {
-                scene.setFlag("core","darknessColor", game.settings.get("illumination","nightColor"))
+                //scene.setFlag("core","darknessColor", game.settings.get("illumination","nightColor"))
                 if(scene.globalLight)
                     scene.update({globalLight: false})
             }
@@ -20,6 +20,13 @@ Hooks.on('ready', () => {
 
 Hooks.on('getSceneControlButtons', controls => {
     let control = controls.find(c => c.name === "lighting") || controls[5];
+
+    control.tools[2].onClick = () =>
+    {
+        canvas.scene.update({darkness: 1}, {animateDarkness: true})
+        canvas.scene.setFlag("core","darknessColor", game.settings.get("illumination","nightColor"))
+    }
+
     control.tools.splice(2, 0, {
 		name: "dusk",
 		title: "Transition to Dusk",
