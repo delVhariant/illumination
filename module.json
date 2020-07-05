@@ -3,7 +3,7 @@
     "title": "Illumination",
     "description": "Add buttons for dawn and dusk, and make scene lighting impact global illumination setting.",
     "author": "delVhar",
-    "version": "0.1.9",
+    "version": "0.1.10",
     "minimumCoreVersion": "0.6.4",
     "compatibleCoreVersion": "0.6.4",
     "scripts": ["scripts/illumination.js"],

@@ -1,6 +1,6 @@
 function toggleGlobalLight(darkness)
 {
-    console.log(`Changing darkness to ${darkness}. GI threshold is ${canvas.scene.data.globalLight}`);
+    console.log(`Changing darkness to ${darkness}. GI threshold is ${game.settings.get("illumination","darknessThreshold")}. Current GI is: ${canvas.scene.data.globalLight}`);
     
     if(game.settings.get("illumination","linkGlobalLight"))
     {
@@ -16,7 +16,7 @@ function toggleGlobalLight(darkness)
             return {globalLight: true}
         }
     }
-    //return null;
+    return {}
 }
 
 Hooks.on('getSceneControlButtons', controls => {
@@ -26,7 +26,12 @@ Hooks.on('getSceneControlButtons', controls => {
     control.tools[1].onClick = () =>
     {
         var level=game.settings.get("illumination","dayLevel");
-        canvas.scene.update({darkness: level}, {animateDarkness: true}, toggleGlobalLight(level))
+        var global = toggleGlobalLight(level);
+        if(global.hasOwnProperty("globalLight"))
+            canvas.scene.update({darkness: level}, {animateDarkness: true}, global)
+        else
+            canvas.scene.update({darkness: level}, {animateDarkness: true})
+
         canvas.scene.setFlag("core","darknessColor", game.settings.get("illumination","dayColor"))
     }
 
@@ -34,7 +39,11 @@ Hooks.on('getSceneControlButtons', controls => {
     control.tools[2].onClick = () =>
     {
         var level=game.settings.get("illumination","nightLevel");
-        canvas.scene.update({darkness: level}, {animateDarkness: true}, toggleGlobalLight(level))
+        var global = toggleGlobalLight(level);
+        if(global.hasOwnProperty("globalLight"))
+            canvas.scene.update({darkness: level}, {animateDarkness: true}, global)
+        else
+            canvas.scene.update({darkness: level}, {animateDarkness: true})
         canvas.scene.setFlag("core","darknessColor", game.settings.get("illumination","nightColor"))
     }
 
@@ -45,7 +54,11 @@ Hooks.on('getSceneControlButtons', controls => {
 		visible: game.settings.get("illumination", "showDawnDusk"),
 		onClick: () => {
             var level=game.settings.get("illumination","duskLevel");
-            canvas.scene.update({darkness: level}, {animateDarkness: true}, toggleGlobalLight(level))
+            var global = toggleGlobalLight(level);
+            if(global.hasOwnProperty("globalLight"))
+                canvas.scene.update({darkness: level}, {animateDarkness: true}, global)
+            else
+                canvas.scene.update({darkness: level}, {animateDarkness: true})
             canvas.scene.setFlag("core","darknessColor", game.settings.get("illumination","duskColor"))
         }
 	});
@@ -56,7 +69,11 @@ Hooks.on('getSceneControlButtons', controls => {
 		visible: game.settings.get("illumination", "showDawnDusk"),
 		onClick: () => {
             var level=game.settings.get("illumination","dawnLevel");
-            canvas.scene.update({darkness: level}, {animateDarkness: true}, toggleGlobalLight(level))
+            var global = toggleGlobalLight(level);
+            if(global.hasOwnProperty("globalLight"))
+                canvas.scene.update({darkness: level}, {animateDarkness: true}, global)
+            else
+                canvas.scene.update({darkness: level}, {animateDarkness: true})
             canvas.scene.setFlag("core","darknessColor", game.settings.get("illumination","dawnColor"));
         }
 	});

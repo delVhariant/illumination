@@ -1,9 +1,9 @@
 {
     "I18N.MAINTAINERS": ["delVhar"],
     "illumination.linkGlobalLight.name": "Link Global Illumination",
-    "illumination.linkGlobalLight.hist": "Should the Global Illumination setting be changed based on scene darkness?",
+    "illumination.linkGlobalLight.hint": "Should the Global Illumination setting be changed based on scene darkness?",
     "illumination.darknessThreshold.name": "Global Illumination Darkness Threshold",
-    "illumination.darknessThreshold.hist": "The scene darkness level at which global illumination is deactivated. Must be between 0 and 1",
+    "illumination.darknessThreshold.hint": "The scene darkness level at which global illumination is deactivated.",
     "illumination.showDawnDusk.name": "Show Lighting Options for Dawn/Dusk", 
     "illumination.showDawnDusk.hint": "Should buttons be shown in the lighting toolbar to switch to Dawn/Dusk",
     "illumination.nightColor.name": "Night Color", 
