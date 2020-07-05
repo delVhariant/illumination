@@ -2,15 +2,15 @@
 
 Hooks.on('ready', () => {
     Hooks.on('updateScene', (scene, darkness, anim, token) => {
-        if(anim.diff)
+        if(anim.diff && darkness.hasOwnPropery("darkness"))
         {
             if(darkness.darkness >= game.settings.get("illumination","darknessThreshold")) // Night
             {
                 //scene.setFlag("core","darknessColor", game.settings.get("illumination","nightColor"))
-                if(scene.globalLight)
+                if(scene.data.globalLight)
                     scene.update({globalLight: false})
             }
-            else if(!scene.globalLight)
+            else if(!scene.data.globalLight)
             {
                 scene.update({globalLight: true})
             }
