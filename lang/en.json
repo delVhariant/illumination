@@ -16,11 +16,11 @@
     "illumination.dawnLevel.hint": "The darkness level to set when Dawn is selected. If global illumination linking is enabled this will determine whether it is off at Dawn.", 
     "illumination.duskColor.name": "Dusk Color", 
     "illumination.duskColor.hint": "The lighting overlay color for Dusk. Use hex color reference (ie: #ae6b6b)",
-    "illumination.duskLevel.name": "Night Darkness Level", 
+    "illumination.duskLevel.name": "Dusk Darkness Level", 
     "illumination.duskLevel.hint": "The darkness level to set when Dusk is selected. If global illumination linking is enabled this will determine whether it is off at Dusk.", 
     "illumination.dayColor.name": "Day Color", 
     "illumination.dayColor.hint": "The lighting overlay color for Day. Use hex color reference (ie: #FFFEFE)",
-    "illumination.dayLevel.name": "Night Darkness Level", 
+    "illumination.dayLevel.name": "Day Darkness Level", 
     "illumination.dayLevel.hint": "The darkness level to set when Day is selected. If global illumination linking is enabled this will determine whether it is off at Day."
 
 }
