@@ -1,7 +1,6 @@
 function toggleGlobalLight(darkness)
 {
-    console.log(`Changing darkness to ${darkness}. GI threshold is ${game.settings.get("illumination","darknessThreshold")}. Current GI is: ${canvas.scene.data.globalLight}`);
-    
+    //console.log(`Changing darkness to ${darkness}. GI threshold is ${game.settings.get("illumination","darknessThreshold")}. Current GI is: ${canvas.scene.data.globalLight}`);
     if(game.settings.get("illumination","linkGlobalLight"))
     {
         if(darkness >= game.settings.get("illumination","darknessThreshold"))
