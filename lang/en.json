@@ -6,8 +6,8 @@
     "dynamic-illumination.darknessThreshold.hint": "The scene darkness level at which global illumination is deactivated.",    
     "dynamic-illumination.animateDarknessChange.name": "Animate Darkness Change",
     "dynamic-illumination.animateDarknessChange.hint": "Should the scene darkness transition be animated? (Animations will not occur if Global Illumination is changed).",
-    "dynamic-illumination.interpolateColor.name": "Interpolate Color Chage (Experimental)",
-    "dynamic-illumination.interpolateColor.hint": "Attempt to interpolate between the two scene colors. May not work.",
+    "dynamic-illumination.interpolateColor.name": "Interpolate Color Change (Experimental)",
+    "dynamic-illumination.interpolateColor.hint": "Attempt to interpolate between the two scene colors. May not work correctly and sends a lot of scene updates.",
     "dynamic-illumination.animationColorChangeDelay.name": "Color Change Delay",
     "dynamic-illumination.animationColorChangeDelay.hint": "How many seconds to wait before changing the scene colour during darkness transitions. (Transition will be instant if Global Illumination is also changing)",
     "dynamic-illumination.showDawnDusk.name": "Show Lighting Options for Dawn/Dusk", 
@@ -28,5 +28,4 @@
     "dynamic-illumination.dayColor.hint": "The lighting overlay color for Day. Use hex color reference (ie: #FFFEFE)",
     "dynamic-illumination.dayLevel.name": "Day Darkness Level", 
     "dynamic-illumination.dayLevel.hint": "The darkness level to set when Day is selected. If global illumination linking is enabled this will determine whether it is off at Day."
-
 }

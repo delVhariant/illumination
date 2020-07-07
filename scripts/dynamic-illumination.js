@@ -64,7 +64,7 @@ async function interpolateSceneColor(target="#FFFEFF")
             color = interpolateColor(canvas.scene.getFlag("core","darknessColor"), target, attributes[0].parent.interpolationSteps/attributes[0].to)
             canvas.scene.setFlag("core","darknessColor", color);
         }
-    });
+    }).then(canvas.scene.setFlag("core","darknessColor", target)); //Set it ot the target at the end
 }
 
 function interpolateColor(color1, color2, factor) {
@@ -175,7 +175,7 @@ Hooks.once("init", () => {
 		hint: game.i18n.localize("dynamic-illumination.interpolateColor.hint"),
 		scope: "world",
 		config: true,
-		default: true,
+		default: false,
 		type: Boolean
     });
 
