@@ -22,18 +22,18 @@ function changeLighting(level, color)
 {
     if(game.settings.get("dynamic-illumination","animateDarknessChange") && !toggleGlobalLight(level).hasOwnProperty('globalLight'))
     {
-        if(canvas.scene.data.darkness == 0) // We are at 0, so first change color then get darker.
-        {
-            canvas.scene.setFlag("core","darknessColor", color);
-            canvas.scene.update({darkness: level}, {animateDarkness: ftruealse});
-        }
-        else if(game.settings.get("dynamic-illumination","interpolateColor"))
+        if(game.settings.get("dynamic-illumination","interpolateColor")) // Use the color interpolation
         {
             canvas.scene.update({darkness: level}, {animateDarkness: true}).then(() => {
                 interpolateSceneColor(color)
             })
         }
-        else
+        else if(canvas.scene.data.darkness == 0) // We are at 0, so first change color then get darker.
+        {
+            canvas.scene.setFlag("core","darknessColor", color);
+            canvas.scene.update({darkness: level}, {animateDarkness: true});
+        }        
+        else // Delay the color change as per setting
         {
             canvas.scene.update({darkness: level}, {animateDarkness: true}).then(
                 setTimeout(() => {
@@ -64,7 +64,10 @@ async function interpolateSceneColor(target="#FFFEFF")
             color = interpolateColor(canvas.scene.getFlag("core","darknessColor"), target, attributes[0].parent.interpolationSteps/attributes[0].to)
             canvas.scene.setFlag("core","darknessColor", color);
         }
-    }).then(canvas.scene.setFlag("core","darknessColor", target)); //Set it ot the target at the end
+    }).then(() => {
+        console.log(`LinearAnimation complete, scene color is: ${canvas.scene.getFlag("core", "darknessColor")}`)
+        canvas.scene.setFlag("core","darknessColor", target)
+    }); //Set it to the target at the end
 }
 
 function interpolateColor(color1, color2, factor) {
