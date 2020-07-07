@@ -87,18 +87,17 @@ Hooks.once("init", () => {
 		default: true,
 		type: Boolean
     });
-    if(game.settings.get("dynamic-illumination", "linkGlobalLight"))
-    {
-        game.settings.register("dynamic-illumination", "darknessThreshold", {
-            name: game.i18n.localize("dynamic-illumination.darknessThreshold.name"),
-            hint: game.i18n.localize("dynamic-illumination.darknessThreshold.hint"),
-            scope: "world",
-            config: true,
-            default: 1.0,
-            type: Number,
-            range: {min: 0.0, max: 1.0, step: 0.05}
-        });
-    }
+
+    game.settings.register("dynamic-illumination", "darknessThreshold", {
+        name: game.i18n.localize("dynamic-illumination.darknessThreshold.name"),
+        hint: game.i18n.localize("dynamic-illumination.darknessThreshold.hint"),
+        scope: "world",
+        config: true,
+        default: 1.0,
+        type: Number,
+        range: {min: 0.0, max: 1.0, step: 0.05}
+    });
+    
     game.settings.register("dynamic-illumination", "showDawnDusk", {
 		name: game.i18n.localize("dynamic-illumination.showDawnDusk.name"),
 		hint: game.i18n.localize("dynamic-illumination.showDawnDusk.hint"),
