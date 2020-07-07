@@ -20,9 +20,20 @@ function toggleGlobalLight(darkness)
 
 function changeLighting(level, color)
 {
-    canvas.scene.update({darkness: level}, {animateDarkness: true}).then(() => {
-        canvas.scene.setFlag("core","darknessColor", color);        
-        });
+    if(game.settings.get("dynamic-illumination","animateDarknessChange") && !toggleGlobalLight(level).hasOwnProperty('globalLight'))
+    {
+        canvas.scene.update({darkness: level}, {animateDarkness: true}).then(
+            setTimeout(() => {
+                canvas.scene.setFlag("core","darknessColor", color)
+            },game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000)        
+        );
+    }
+    else
+    {
+        canvas.scene.update({darkness: level}, {animateDarkness: false}).then(
+            canvas.scene.setFlag("core","darknessColor", color)
+        );
+    }
 }
 
 Hooks.on('updateScene', (scene, change, diff, token) => {
@@ -97,7 +108,26 @@ Hooks.once("init", () => {
         type: Number,
         range: {min: 0.0, max: 1.0, step: 0.05}
     });
-    
+
+    game.settings.register("dynamic-illumination", "animateDarknessChange", {
+		name: game.i18n.localize("dynamic-illumination.animateDarknessChange.name"),
+		hint: game.i18n.localize("dynamic-illumination.animateDarknessChange.hint"),
+		scope: "world",
+		config: true,
+		default: true,
+		type: Boolean
+    });
+
+    game.settings.register("dynamic-illumination", "animationColorChangeDelay", {
+		name: game.i18n.localize("dynamic-illumination.animationColorChangeDelay.name"),
+		hint: game.i18n.localize("dynamic-illumination.animationColorChangeDelay.hint"),
+		scope: "world",
+		config: true,
+		default: 7.5,
+        type: Number,
+        range: {min: 0.0, max: 10.0, step: 0.5}
+    });
+
     game.settings.register("dynamic-illumination", "showDawnDusk", {
 		name: game.i18n.localize("dynamic-illumination.showDawnDusk.name"),
 		hint: game.i18n.localize("dynamic-illumination.showDawnDusk.hint"),

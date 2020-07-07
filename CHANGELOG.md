@@ -1,15 +1,16 @@
 # Dynamic Illumination Changelog
 ***
-## 0.1.12
-* Used promise to trigger color change after darkness transition.
-    * This should let the animation transition remain (Unless Global Illumination changes)
+## 0.2.0
+* Added option to enable darkness level transitions (transition will still be instant if Global Illumination changes)
+* Added configurable delay to color change during animated transitions (transition will still be instant if Global Illumination changes)
+    * This is a pretty basic implementation using setTimeout, please raise an issue if you see any problems with this.
 * Moved Global Illumination change to occur on the 'updateScene' hook
     * This will mean global illumination change can be triggered by other modules that alter the scene darkness
-* General code clean up - moved everything into a function for neatness
+* General code clean up - moved transitions into a shared function for neatness
 * Replaced all cases of 'illumination' with 'dynamic-illumination' for consistency in settings/file names etc.
 
 *Notes*  
-I still haven't worked out why the module settings sometiomes show under 'General Module Settings'. Looking at the foundry source code, that should only occur if the module title isn't set, which it is...  
+I still haven't worked out why the module settings sometimes show under 'General Module Settings'. Looking at the foundry source code, that should only occur if the module title isn't set, which it is...  
 The behaviour seems inconsistent, I suspect it's because I changed the title at some point. It might be worth uninstalling and reinstalling the module if you run into the issue.
 ***
 ## 0.1.11
