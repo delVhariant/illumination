@@ -30,7 +30,7 @@ Hooks.on('updateScene', (scene, change, diff, token) => {
     {
         var global = toggleGlobalLight(change.darkness);
         if(global.hasOwnProperty("globalLight"))
-            canvas.scene.update(global)
+            scene.update(global)
     }
 })
 
@@ -43,14 +43,13 @@ Hooks.on('getSceneControlButtons', controls => {
     let dayButton = control.tools.findIndex(t => t.name === "day")
     if(dayButton)
     {
-        console.warn(control.tools[dayButton]);
-        control.tools[dayButton].onClick = changeLighting(game.settings.get("dynamic-illumination","dayLevel"), game.settings.get("dynamic-illumination","dayColor"));
+        control.tools[dayButton].onClick = () => {changeLighting(game.settings.get("dynamic-illumination","dayLevel"), game.settings.get("dynamic-illumination","dayColor"))};
         control.tools.splice(dayButton, 0, {
             name: "dawn",
             title: "Transition to Dawn",
             icon: "far fa-sun",
             visible: game.settings.get("dynamic-illumination", "showDawnDusk"),
-            onClick: changeLighting(game.settings.get("dynamic-illumination","dawnLevel"), game.settings.get("dynamic-illumination","dawnColor"))
+            onClick: () => {changeLighting(game.settings.get("dynamic-illumination","dawnLevel"), game.settings.get("dynamic-illumination","dawnColor"))}
         });
     }
     else
@@ -62,14 +61,13 @@ Hooks.on('getSceneControlButtons', controls => {
     let nightButton = control.tools.findIndex(t => t.name === "night")
     if(nightButton)
     {
-        console.warn(control.tools[nightButton]);
-        control.tools[nightButton].onClick = changeLighting(game.settings.get("dynamic-illumination","nightLevel"), game.settings.get("dynamic-illumination","nightColor"));
+        control.tools[nightButton].onClick = () => {changeLighting(game.settings.get("dynamic-illumination","nightLevel"), game.settings.get("dynamic-illumination","nightColor"))};
         control.tools.splice(nightButton, 0, {
             name: "dusk",
             title: "Transition to Dusk",
             icon: "far fa-moon",
             visible: game.settings.get("dynamic-illumination", "showDawnDusk"),
-            onClick: changeLighting(game.settings.get("dynamic-illumination","duskLevel"), game.settings.get("dynamic-illumination","duskColor"))
+            onClick: () => {changeLighting(game.settings.get("dynamic-illumination","duskLevel"), game.settings.get("dynamic-illumination","duskColor"))}
         });
     }
     else
