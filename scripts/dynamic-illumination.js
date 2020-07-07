@@ -71,21 +71,21 @@ function interpolateColor(color1, color2, factor) {
     if (arguments.length < 3) { 
         factor = 0.5; 
     }
-    var c1 = hexToRgb(color1);
-    var c2 = hexToRgb(color2);
+    var c1 = convertHexRGB(color1);
+    var c2 = convertHexRGB(color2);
     result=c1;
     for (var i = 0; i < 3; i++) {
         result[i] = Math.round(result[i] + factor * (c2[i] - c1[i]));
     }
-    return rgbToHex(result);
+    return convertRGBHex(result);
 };
 
  // Converts hex string to RGB array 
-const hexToRgb = hex => hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i,(m, r, g, b) => '#' + r + r + g + g + b + b)
+const convertHexRGB = hex => hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i,(m, r, g, b) => '#' + r + r + g + g + b + b)
     .substring(1).match(/.{2}/g)
     .map(x => parseInt(x, 16));
 // Converts RGB array to hex string  
-const rgbToHex = (r, g, b) => '#' + [r, g, b]
+const convertRGBHex = (r, g, b) => '#' + [r, g, b]
     .map(x => x.toString(16).padStart(2, '0')).join('');
 
 Hooks.on('updateScene', (scene, change, diff, token) => {
