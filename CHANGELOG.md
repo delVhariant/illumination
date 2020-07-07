@@ -1,9 +1,13 @@
 # Dynamic Illumination Changelog
 ***
+##
+* Added experimental feature to interpolate scene color instead of setting it. Probably doesn't work.
+
 ## 0.2.0
 * Added option to enable darkness level transitions (transition will still be instant if Global Illumination changes)
 * Added configurable delay to color change during animated transitions (transition will still be instant if Global Illumination changes)
     * This is a pretty basic implementation using setTimeout, please raise an issue if you see any problems with this.
+    * The color change always occurs first if the darkness level is currently set to 0.
 * Moved Global Illumination change to occur on the 'updateScene' hook
     * This will mean global illumination change can be triggered by other modules that alter the scene darkness
 * General code clean up - moved transitions into a shared function for neatness

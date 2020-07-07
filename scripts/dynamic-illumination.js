@@ -22,11 +22,25 @@ function changeLighting(level, color)
 {
     if(game.settings.get("dynamic-illumination","animateDarknessChange") && !toggleGlobalLight(level).hasOwnProperty('globalLight'))
     {
-        canvas.scene.update({darkness: level}, {animateDarkness: true}).then(
-            setTimeout(() => {
-                canvas.scene.setFlag("core","darknessColor", color)
-            },game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000)        
-        );
+        if(canvas.scene.data.darkness == 0) // We are at 0, so first change color then get darker.
+        {
+            canvas.scene.setFlag("core","darknessColor", color);
+            canvas.scene.update({darkness: level}, {animateDarkness: ftruealse});
+        }
+        else if(game.settings.get("dynamic-illumination","interpolate-color"))
+        {
+            canvas.scene.update({darkness: level}, {animateDarkness: true}).then(() => {
+                interpolateSceneColor(color)
+            })
+        }
+        else
+        {
+            canvas.scene.update({darkness: level}, {animateDarkness: true}).then(
+                setTimeout(() => {
+                    canvas.scene.setFlag("core","darknessColor", color)
+                },game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000)        
+            );
+        }
     }
     else
     {
@@ -35,6 +49,44 @@ function changeLighting(level, color)
         );
     }
 }
+
+async function interpolateSceneColor(target="#FFFEFF")
+{    
+    const interpolationData = [{
+        parent: {interpolationSteps: 0},
+        attribute: "interpolationSteps",
+        to: 20
+    }];
+    return CanvasAnimation.animateLinear(interpolationData, {
+        name: "lighting.darknessColor",
+        duration: 10000,
+        ontick: (dt, attributes) => {
+            color = interpolateColor(canvas.scene.getFlag("core","darknessColor"), target, attributes[0].parent.interpolationSteps/attributes[0].to)
+            canvas.scene.setFlag("core","darknessColor", color);
+        }
+    });
+}
+
+function interpolateColor(color1, color2, factor) {
+    if (arguments.length < 3) { 
+        factor = 0.5; 
+    }
+    var c1 = hexToRgb(color1);
+    var c2 = hexToRgb(color2);
+    result=c1;
+    for (var i = 0; i < 3; i++) {
+        result[i] = Math.round(result[i] + factor * (c2[i] - c1[i]));
+    }
+    return rgbToHex(result);
+};
+
+ // Converts hex string to RGB array 
+const hexToRgb = hex => hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i,(m, r, g, b) => '#' + r + r + g + g + b + b)
+    .substring(1).match(/.{2}/g)
+    .map(x => parseInt(x, 16));
+// Converts RGB array to hex string  
+const rgbToHex = (r, g, b) => '#' + [r, g, b]
+    .map(x => x.toString(16).padStart(2, '0')).join('');
 
 Hooks.on('updateScene', (scene, change, diff, token) => {
     if(change.hasOwnProperty('darkness') && diff.diff)
@@ -112,6 +164,15 @@ Hooks.once("init", () => {
     game.settings.register("dynamic-illumination", "animateDarknessChange", {
 		name: game.i18n.localize("dynamic-illumination.animateDarknessChange.name"),
 		hint: game.i18n.localize("dynamic-illumination.animateDarknessChange.hint"),
+		scope: "world",
+		config: true,
+		default: true,
+		type: Boolean
+    });
+
+    game.settings.register("dynamic-illumination", "interpolateColor", {
+		name: game.i18n.localize("dynamic-illumination.interpolateColor.name"),
+		hint: game.i18n.localize("dynamic-illumination.interpolateColor.hint"),
 		scope: "world",
 		config: true,
 		default: true,
