@@ -28,7 +28,7 @@ function changeLighting(level, color)
 Hooks.on('updateScene', (scene, change, diff, token) => {
     if(change.hasOwnProperty('darkness') && diff.diff)
     {
-        var global = toggleGlobalLight(level);
+        var global = toggleGlobalLight(change.darkness);
         if(global.hasOwnProperty("globalLight"))
             canvas.scene.update(global)
     }
@@ -43,6 +43,7 @@ Hooks.on('getSceneControlButtons', controls => {
     let dayButton = control.tools.findIndex(t => t.name === "day")
     if(dayButton)
     {
+        console.warn(control.tools[dayButton]);
         control.tools[dayButton].onClick = changeLighting(game.settings.get("dynamic-illumination","dayLevel"), game.settings.get("dynamic-illumination","dayColor"));
         control.tools.splice(dayButton, 0, {
             name: "dawn",
@@ -61,6 +62,7 @@ Hooks.on('getSceneControlButtons', controls => {
     let nightButton = control.tools.findIndex(t => t.name === "night")
     if(nightButton)
     {
+        console.warn(control.tools[nightButton]);
         control.tools[nightButton].onClick = changeLighting(game.settings.get("dynamic-illumination","nightLevel"), game.settings.get("dynamic-illumination","nightColor"));
         control.tools.splice(nightButton, 0, {
             name: "dusk",
