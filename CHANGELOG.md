@@ -9,7 +9,8 @@
 * Replaced all cases of 'illumination' with 'dynamic-illumination' for consistency in settings/file names etc.
 
 *Notes*  
-I still haven't worked out why the module settings sometiomes show under 'General Module Settings'. Looking at the foudnry source code, that should only occur if the module title isn't set, which it is...
+I still haven't worked out why the module settings sometiomes show under 'General Module Settings'. Looking at the foundry source code, that should only occur if the module title isn't set, which it is...  
+The behaviour seems inconsistent, I suspect it's because I changed the title at some point. It might be worth uninstalling and reinstalling the module if you run into the issue.
 ***
 ## 0.1.11
 * Renamed to Dynamic Illumination
