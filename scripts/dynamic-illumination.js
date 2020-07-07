@@ -27,7 +27,7 @@ function changeLighting(level, color)
             canvas.scene.setFlag("core","darknessColor", color);
             canvas.scene.update({darkness: level}, {animateDarkness: ftruealse});
         }
-        else if(game.settings.get("dynamic-illumination","interpolate-color"))
+        else if(game.settings.get("dynamic-illumination","interpolateColor"))
         {
             canvas.scene.update({darkness: level}, {animateDarkness: true}).then(() => {
                 interpolateSceneColor(color)
@@ -77,7 +77,7 @@ function interpolateColor(color1, color2, factor) {
     for (var i = 0; i < 3; i++) {
         result[i] = Math.round(result[i] + factor * (c2[i] - c1[i]));
     }
-    return convertRGBHex(result);
+    return convertRGBHex(result[0], result[1], result[2]);
 };
 
  // Converts hex string to RGB array 
