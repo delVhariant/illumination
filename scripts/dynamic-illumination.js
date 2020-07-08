@@ -31,21 +31,27 @@ function changeLighting(level, color)
         else if(canvas.scene.data.darkness == 0) // We are at 0, so first change color then get darker.
         {
             //canvas.scene.setFlag("core","darknessColor", color);
-            canvas.scene.update({darkness: level, "flags.core.darknessColor": color}, {animateDarkness: true, diff: false});
+            canvas.scene.update({darkness: level, "flags.core.darknessColor": color}, {animateDarkness: true, diff: false}).then(()=> {
+                canvas.getLayer("LightingLayer").update();
+            });;
         }        
         else // Delay the color change as per setting
         {
             canvas.scene.update({darkness: level}, {animateDarkness: true}).then(
                 setTimeout(() => {
                     //canvas.scene.setFlag("core","darknessColor", color)
-                    canvas.scene.update({"flags.core.darknessColor": color}, {diff: false});
+                    canvas.scene.update({"flags.core.darknessColor": color}, {diff: false}).then(()=> {
+                        canvas.getLayer("LightingLayer").update();
+                    });
                 },game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000)        
             );
         }
     }
     else
     {
-        canvas.scene.update({darkness: level, "flags.core.darknessColor": color}, {animateDarkness: false, diff: false})
+        canvas.scene.update({darkness: level, "flags.core.darknessColor": color}, {animateDarkness: false, diff: false}).then(()=> {
+            canvas.getLayer("LightingLayer").update();
+        });
     }
 }
 
@@ -61,13 +67,20 @@ async function interpolateSceneColor(target="#FFFEFF")
         duration: game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000,
         ontick: (dt, attributes) => {
             color = interpolateColor(canvas.scene.getFlag("core","darknessColor"), target, attributes[0].parent.interpolationSteps/attributes[0].to)
-            if(color != canvas.scene.getFlag("core","darknessColor")) // Only update if we actually changed color
-                canvas.scene.update({"flags.core.darknessColor": color}, {diff: false});
+            // Only update if we actually changed color
+            if(color.toLowerCase() != canvas.scene.getFlag("core","darknessColor").toLowerCase())
+            {
+                
+                canvas.scene.update({"flags.core.darknessColor": color}, {diff: false}).then(()=> {
+                    canvas.getLayer("LightingLayer").update();
+                });
+            } 
         }
     }).then(() => {
-        //console.log(`LinearAnimation complete, scene color is: ${canvas.scene.getFlag("core", "darknessColor")}`)
-        //canvas.scene.setFlag("core","darknessColor", target)
-        canvas.scene.update({"flags.core.darknessColor": color}, {diff: false}); //Set it to the target at the end in case it wasn't there for some reason
+         //Set it to the target at the end in case it wasn't there for some reason
+        canvas.scene.update({"flags.core.darknessColor": color}, {diff: false}).then(()=> {
+            canvas.getLayer("LightingLayer").update();
+        });
     }); }
 
 function interpolateColor(color1, color2, factor) {
