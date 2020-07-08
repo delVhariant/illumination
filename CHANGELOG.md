@@ -1,7 +1,8 @@
 # Dynamic Illumination Changelog
 ***
-##
-* Added experimental feature to interpolate scene color instead of setting it. Probably doesn't work.
+## 0.2.2
+* Added experimental feature to interpolate scene color instead of setting it. Seems to work ok, but does send a lot of scene updates.
+* Fixed bug where color changes didn't occur correctly on button press.
 
 ## 0.2.0
 * Added option to enable darkness level transitions (transition will still be instant if Global Illumination changes)
