@@ -30,8 +30,9 @@ function changeLighting(level, color)
         }
         else if(canvas.scene.data.darkness == 0) // We are at 0, so first change color then get darker.
         {
-            canvas.scene.setFlag("core","darknessColor", color).then(()=> {
+            canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
                 canvas.scene.update({darkness: level}, {animateDarkness: true}).then(() => {
+                    CONFIG.Canvas.darknessColor = color;
                     canvas.getLayer("LightingLayer").update();
                 });            
             });
@@ -41,7 +42,8 @@ function changeLighting(level, color)
             canvas.scene.update({darkness: level}, {animateDarkness: true, diff: false}).then(
                 setTimeout(() => {
                     //canvas.scene.setFlag("core","darknessColor", color)
-                    canvas.scene.setFlag("core","darknessColor", color).then(()=> {
+                    canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
+                        CONFIG.Canvas.darknessColor = color;
                         canvas.getLayer("LightingLayer").update();
                     });
                 },game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000)        
@@ -50,8 +52,9 @@ function changeLighting(level, color)
     }
     else
     {
-        canvas.scene.setFlag("core","darknessColor", color).then(()=> {
+        canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
             canvas.scene.update({darkness: level}, {animateDarkness: false}).then(() => {
+                CONFIG.Canvas.darknessColor = color;
                 canvas.getLayer("LightingLayer").update();
             });            
         });
@@ -69,18 +72,20 @@ async function interpolateSceneColor(target="#FFFEFF")
         name: "lighting.darknessColor",
         duration: game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000,
         ontick: (dt, attributes) => {
-            color = interpolateColor(canvas.scene.getFlag("core","darknessColor"), target, attributes[0].parent.interpolationSteps/attributes[0].to)
+            color = interpolateColor(canvas.scene.getFlag("dynamic-illumination","darknessColor"), target, attributes[0].parent.interpolationSteps/attributes[0].to)
             // Only update if we actually changed color
-            if(color.toLowerCase() != canvas.scene.getFlag("core","darknessColor").toLowerCase())
+            if(color.toLowerCase() != canvas.scene.getFlag("dynamic-illumination","darknessColor").toLowerCase())
             {                
-                canvas.scene.setFlag("core","darknessColor", color).then(()=> {
+                canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
+                    CONFIG.Canvas.darknessColor = color;
                     canvas.getLayer("LightingLayer").update();
                 });
             } 
         }
     }).then(() => {
          //Set it to the target at the end in case it wasn't there for some reason
-         canvas.scene.setFlag("core","darknessColor", color).then(()=> {
+         canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
+            CONFIG.Canvas.darknessColor = color;
             canvas.getLayer("LightingLayer").update();
         });
     }); }
@@ -158,8 +163,8 @@ Hooks.on('getSceneControlButtons', controls => {
 
 });
 
-Hooks.once("init", () => {
-
+Hooks.once("init", () => 
+{
     game.settings.register("dynamic-illumination", "linkGlobalLight", {
 		name: game.i18n.localize("dynamic-illumination.linkGlobalLight.name"),
 		hint: game.i18n.localize("dynamic-illumination.linkGlobalLight.hint"),
@@ -292,5 +297,17 @@ Hooks.once("init", () => {
 		type: Number,
         range: {min: 0.0, max: 1.0, step: 0.05}
     });
-    
+
+})
+
+Hooks.once("canvasInit", () => {
+    canvas.scene.unsetFlag("core","darknessColor");  // Delete darknessColor Flag to clean up old usage.
+    // Set Canvas Darkness color to match flag
+    var color = canvas.scene.getFlag("dynamic-illumination","darknessColor");
+    if(color == undefined)
+    {
+        canvas.scene.setFlag("dynamic-illumination","darknessColor", "#110033");
+        color = "#110033";
+    }
+    CONFIG.Canvas.darknessColor = color;    
 });
