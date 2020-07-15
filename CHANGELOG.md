@@ -1,9 +1,14 @@
 # Dynamic Illumination Changelog
 ***
+## 0.2.4
+* Fixed a bug that would leave the darkness color stuck if the module was removed or disabled.
+
+***
 ## 0.2.2
 * Added experimental feature to interpolate scene color instead of setting it. Seems to work ok, but does send a lot of scene updates.
 * Fixed bug where color changes didn't occur correctly on button press.
 
+***
 ## 0.2.0
 * Added option to enable darkness level transitions (transition will still be instant if Global Illumination changes)
 * Added configurable delay to color change during animated transitions (transition will still be instant if Global Illumination changes)
