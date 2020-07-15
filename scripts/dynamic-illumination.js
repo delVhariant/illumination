@@ -298,7 +298,9 @@ Hooks.once("init", () =>
         range: {min: 0.0, max: 1.0, step: 0.05}
     });
 
+})
 
+Hooks.once("canvasInit", () => {
     canvas.scene.unsetFlag("core","darknessColor");  // Delete darknessColor Flag to clean up old usage.
     // Set Canvas Darkness color to match flag
     var color = canvas.scene.getFlag("dynamic-illumination","darknessColor");
@@ -307,6 +309,5 @@ Hooks.once("init", () =>
         canvas.scene.setFlag("dynamic-illumination","darknessColor", "#110033");
         color = "#110033";
     }
-    CONFIG.Canvas.darknessColor = color;
-    
+    CONFIG.Canvas.darknessColor = color;    
 });
