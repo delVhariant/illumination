@@ -165,17 +165,6 @@ Hooks.on('getSceneControlButtons', controls => {
 
 Hooks.once("init", () => 
 {
-    canvas.scene.unsetFlag("core","darknessColor");  // Delete darknessColor Flag to clean up old usage.
-
-    // Set Canvas Darkness color to match flag
-    var color = canvas.scene.getFlag("dynamic-illumination","darknessColor");
-    if(color == undefined)
-    {
-        canvas.scene.setFlag("dynamic-illumination","darknessColor", "#110033");
-        color = "#110033";
-    }
-    CONFIG.Canvas.darknessColor = color;
-
     game.settings.register("dynamic-illumination", "linkGlobalLight", {
 		name: game.i18n.localize("dynamic-illumination.linkGlobalLight.name"),
 		hint: game.i18n.localize("dynamic-illumination.linkGlobalLight.hint"),
@@ -308,5 +297,16 @@ Hooks.once("init", () =>
 		type: Number,
         range: {min: 0.0, max: 1.0, step: 0.05}
     });
+
+
+    canvas.scene.unsetFlag("core","darknessColor");  // Delete darknessColor Flag to clean up old usage.
+    // Set Canvas Darkness color to match flag
+    var color = canvas.scene.getFlag("dynamic-illumination","darknessColor");
+    if(color == undefined)
+    {
+        canvas.scene.setFlag("dynamic-illumination","darknessColor", "#110033");
+        color = "#110033";
+    }
+    CONFIG.Canvas.darknessColor = color;
     
 });

@@ -3,7 +3,7 @@
     "title": "Dynamic Illumination (DEV)",
     "description": "Adds additional setting for lighting time of day color, additional lighting 'times' (Dawn/Dusk), and make scene lighting impact global illumination setting.",
     "author": "delVhar",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "minimumCoreVersion": "0.6.4",
     "compatibleCoreVersion": "0.6.4",
     "scripts": ["scripts/dynamic-illumination.js"],
