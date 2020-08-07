@@ -3,9 +3,9 @@
     "title": "Dynamic Illumination",
     "description": "Adds additional setting for lighting time of day color, additional lighting 'times' (Dawn/Dusk), and make scene lighting impact global illumination setting.",
     "author": "delVhar",
-    "version": "0.2.4",
+    "version": "0.3.1",
     "minimumCoreVersion": "0.6.4",
-    "compatibleCoreVersion": "0.6.4",
+    "compatibleCoreVersion": "0.6.5",
     "scripts": ["scripts/dynamic-illumination.js"],
     "languages": [
 		{
@@ -14,6 +14,7 @@
 			"path": "lang/en.json"
         }
     ],
+    "socket": true,
     "url": "https://github.com/delVhariant/illumination",
     "manifest": "https://raw.githubusercontent.com/delVhariant/illumination/master/module.json",
     "download": "https://github.com/delVhariant/illumination/zipball/master"
