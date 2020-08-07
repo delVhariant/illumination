@@ -301,13 +301,16 @@ Hooks.once("init", () =>
 })
 
 Hooks.once("canvasInit", () => {
-    canvas.scene.unsetFlag("core","darknessColor");  // Delete darknessColor Flag to clean up old usage.
-    // Set Canvas Darkness color to match flag
-    var color = canvas.scene.getFlag("dynamic-illumination","darknessColor");
-    if(color == undefined)
+    if(game.user.isGM)
     {
-        canvas.scene.setFlag("dynamic-illumination","darknessColor", "#110033");
-        color = "#110033";
+        canvas.scene.unsetFlag("core","darknessColor");  // Delete darknessColor Flag to clean up old usage.
+        // Set Canvas Darkness color to match flag
+        var color = canvas.scene.getFlag("dynamic-illumination","darknessColor");
+        if(color == undefined)
+        {
+            canvas.scene.setFlag("dynamic-illumination","darknessColor", "#110033");
+            color = "#110033";
+        }
+        CONFIG.Canvas.darknessColor = color;    
     }
-    CONFIG.Canvas.darknessColor = color;    
 });
