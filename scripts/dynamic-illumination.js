@@ -32,7 +32,7 @@ function changeLighting(level, color)
         {
             canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
                 canvas.scene.update({darkness: level}, {animateDarkness: true}).then(() => {
-                    CONFIG.Canvas.darknessColor = color;
+                    SendColorChange(color);
                     canvas.getLayer("LightingLayer").update();
                 });            
             });
@@ -43,7 +43,7 @@ function changeLighting(level, color)
                 setTimeout(() => {
                     //canvas.scene.setFlag("core","darknessColor", color)
                     canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
-                        CONFIG.Canvas.darknessColor = color;
+                        SendColorChange(color);
                         canvas.getLayer("LightingLayer").update();
                     });
                 },game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000)        
@@ -54,7 +54,7 @@ function changeLighting(level, color)
     {
         canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
             canvas.scene.update({darkness: level}, {animateDarkness: false}).then(() => {
-                CONFIG.Canvas.darknessColor = color;
+                SendColorChange(color);
                 canvas.getLayer("LightingLayer").update();
             });            
         });
@@ -77,7 +77,7 @@ async function interpolateSceneColor(target="#FFFEFF")
             if(color.toLowerCase() != canvas.scene.getFlag("dynamic-illumination","darknessColor").toLowerCase())
             {                
                 canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
-                    CONFIG.Canvas.darknessColor = color;
+                    SendColorChange(color);
                     canvas.getLayer("LightingLayer").update();
                 });
             } 
@@ -85,7 +85,7 @@ async function interpolateSceneColor(target="#FFFEFF")
     }).then(() => {
          //Set it to the target at the end in case it wasn't there for some reason
          canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
-            CONFIG.Canvas.darknessColor = color;
+            SendColorChange(color);
             canvas.getLayer("LightingLayer").update();
         });
     }); }
@@ -111,8 +111,22 @@ const convertHexRGB = hex => hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i,(m, 
 const convertRGBHex = (r, g, b) => '#' + [r, g, b]
     .map(x => x.toString(16).padStart(2, '0')).join('');
 
+
+function SendColorChange(color)
+{
+    CONFIG.Canvas.darknessColor = color;
+    game.socket.emit("module.dynamic-illumination", color);
+}
+
+function ReceiveColorChange(color)
+{
+    CONFIG.Canvas.darknessColor = color;
+}
+
+Hooks.on('ready', () => {game.socket.on('module.dynamic-illumination', ReceiveColorChange)});
+
 Hooks.on('updateScene', (scene, change, diff, token) => {
-    if(change.hasOwnProperty('darkness'))
+    if(game.user.isGM && change.hasOwnProperty('darkness'))
     {
         var global = toggleGlobalLight(change.darkness);
         if(global.hasOwnProperty("globalLight"))
@@ -311,6 +325,6 @@ Hooks.once("canvasInit", () => {
             canvas.scene.setFlag("dynamic-illumination","darknessColor", "#110033");
             color = "#110033";
         }
-        CONFIG.Canvas.darknessColor = color;    
+        SendColorChange(color);
     }
 });
