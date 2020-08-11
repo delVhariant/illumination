@@ -31,32 +31,22 @@ function changeLighting(level, color)
         else if(canvas.scene.data.darkness == 0) // We are at 0, so first change color then get darker.
         {
             canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
-                canvas.scene.update({darkness: level}, {animateDarkness: true}).then(() => {
-                    SendColorChange(color);
-                    canvas.getLayer("LightingLayer").update();
-                });            
+                SendColorChange(color);          
             });
         }        
         else // Delay the color change as per setting
         {
             canvas.scene.update({darkness: level}, {animateDarkness: true, diff: false}).then(
                 setTimeout(() => {
-                    //canvas.scene.setFlag("core","darknessColor", color)
-                    canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
-                        SendColorChange(color);
-                        canvas.getLayer("LightingLayer").update();
-                    });
+                    SendColorChange(color);
                 },game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000)        
             );
         }
     }
     else
     {
-        canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
-            canvas.scene.update({darkness: level}, {animateDarkness: false}).then(() => {
-                SendColorChange(color);
-                canvas.getLayer("LightingLayer").update();
-            });            
+        canvas.scene.update({darkness: level}, {animateDarkness: false}).then(() => {
+            SendColorChange(color);
         });
     }
 }
@@ -76,19 +66,14 @@ async function interpolateSceneColor(target="#FFFEFF")
             // Only update if we actually changed color
             if(color.toLowerCase() != canvas.scene.getFlag("dynamic-illumination","darknessColor").toLowerCase())
             {                
-                canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
-                    SendColorChange(color);
-                    canvas.getLayer("LightingLayer").update();
-                });
+                SendColorChange(color);
             } 
         }
     }).then(() => {
          //Set it to the target at the end in case it wasn't there for some reason
-         canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
-            SendColorChange(color);
-            canvas.getLayer("LightingLayer").update();
-        });
-    }); }
+         SendColorChange(target);
+    }); 
+}
 
 function interpolateColor(color1, color2, factor) {
     if (arguments.length < 3) { 
@@ -114,13 +99,21 @@ const convertRGBHex = (r, g, b) => '#' + [r, g, b]
 
 function SendColorChange(color)
 {
-    CONFIG.Canvas.darknessColor = color;
-    game.socket.emit("module.dynamic-illumination", color);
+    return new Promise(function(resolve) {
+        canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
+            CONFIG.Canvas.darknessColor = color;
+            game.socket.emit("module.dynamic-illumination", color);
+            canvas.getLayer("LightingLayer").update();
+        }).then(() => {
+            resolve()
+        });
+    });
 }
 
 function ReceiveColorChange(color)
 {
     CONFIG.Canvas.darknessColor = color;
+    canvas.getLayer("LightingLayer").update();
 }
 
 Hooks.on('ready', () => {game.socket.on('module.dynamic-illumination', ReceiveColorChange)});
