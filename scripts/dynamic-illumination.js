@@ -30,7 +30,7 @@ function changeLighting(level, color)
         }
         else if(canvas.scene.data.darkness == 0) // We are at 0, so first change color then get darker.
         {
-            canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
+            canvas.scene.update({darkness: level}, {animateDarkness: true}).then(()=> {
                 SendColorChange(color);          
             });
         }        
@@ -308,16 +308,25 @@ Hooks.once("init", () =>
 })
 
 Hooks.once("canvasInit", () => {
+    var color = canvas.scene.getFlag("dynamic-illumination","darknessColor");
     if(game.user.isGM)
     {
-        canvas.scene.unsetFlag("core","darknessColor");  // Delete darknessColor Flag to clean up old usage.
+        canvas.scene.unsetFlag("core","darknessColor");  // Delete darknessColor Flag to clean up old usage...Replace this with a button in options?
         // Set Canvas Darkness color to match flag
-        var color = canvas.scene.getFlag("dynamic-illumination","darknessColor");
+        
         if(color == undefined)
         {
             canvas.scene.setFlag("dynamic-illumination","darknessColor", "#110033");
             color = "#110033";
         }
         SendColorChange(color);
+    }
+    else // We aren't the GM, so lets just make sure our color matches the flag.
+    {
+        if(CONFIG.Canvas.darknessColor != color)
+        {
+            ReceiveColorChange(color);
+
+        }
     }
 });
