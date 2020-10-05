@@ -17,5 +17,5 @@
     "socket": true,
     "url": "https://github.com/delVhariant/illumination",
     "manifest": "https://raw.githubusercontent.com/delVhariant/illumination/0.7.x-master/module.json",
-    "download": "https://github.com/delVhariant/illumination/archive/v0.7.3.zip"
+    "download": "https://github.com/delVhariant/illumination/archive/0.7.3.zip"
   }
