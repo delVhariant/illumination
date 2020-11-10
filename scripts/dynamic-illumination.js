@@ -67,6 +67,8 @@ function SendColorChange(color)
         var convertedColor = PIXI.utils.string2hex(color);
 		canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
             CONFIG.Canvas.darknessColor = convertedColor;
+            CONFIG.canvas.unexploredColor = convertedColor;
+            CONFIG.canvas.exploredColor = convertedColor;
             game.socket.emit("module.dynamic-illumination");
             canvas.getLayer("LightingLayer").refresh();
         }).then(() => {
@@ -77,7 +79,10 @@ function SendColorChange(color)
 
 function ReceiveColorChange()
 {
-    CONFIG.Canvas.darknessColor = PIXI.utils.string2hex(canvas.scene.getFlag("dynamic-illumination","darknessColor"));
+    var convertedColor =  PIXI.utils.string2hex(canvas.scene.getFlag("dynamic-illumination","darknessColor"));
+    CONFIG.Canvas.darknessColor = convertedColor;
+    CONFIG.canvas.unexploredColor = convertedColor;
+    CONFIG.canvas.exploredColor = convertedColor;
     canvas.getLayer("LightingLayer").refresh();
 }
 
