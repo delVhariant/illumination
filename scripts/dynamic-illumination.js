@@ -1,55 +1,19 @@
-function toggleGlobalLight(darkness)
-{
-    //console.log(`Changing darkness to ${darkness}. GI threshold is ${game.settings.get("dynamic-illumination","darknessThreshold")}. Current GI is: ${canvas.scene.data.globalLight}`);
-    if(game.settings.get("dynamic-illumination","linkGlobalLight"))
-    {
-        if(darkness >= game.settings.get("dynamic-illumination","darknessThreshold"))
-        {
-            if(canvas.scene.data.globalLight)
-            {
-                return {globalLight: false}
-            }
-        }
-        else if(!canvas.scene.data.globalLight)
-        {
-            return {globalLight: true}
-        }
-    }
-    return {}
-}
-
 function changeLighting(level, color)
 {
-    if(game.settings.get("dynamic-illumination","animateDarknessChange") && !toggleGlobalLight(level).hasOwnProperty('globalLight'))
-    {
-        if(game.settings.get("dynamic-illumination","interpolateColor")) // Use the color interpolation
-        {
-            canvas.scene.update({darkness: level}, {animateDarkness: true}).then(() => {
+	if(game.settings.get("dynamic-illumination","animateDarknessChange"))
+	{
+		canvas.scene.update({darkness: level}, {animateDarkness: true}).then(() => {
                 interpolateSceneColor(color)
-            })
-        }
-        else if(canvas.scene.data.darkness == 0) // We are at 0, so first change color then get darker.
-        {
-            canvas.scene.update({darkness: level}, {animateDarkness: true}).then(()=> {
-                SendColorChange(color);          
             });
-        }        
-        else // Delay the color change as per setting
-        {
-            canvas.scene.update({darkness: level}, {animateDarkness: true, diff: false}).then(
-                setTimeout(() => {
-                    SendColorChange(color);
-                },game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000)        
-            );
-        }
-    }
-    else
-    {
-        canvas.scene.update({darkness: level}, {animateDarkness: false}).then(() => {
+	}
+	else
+	{
+		canvas.scene.update({darkness: level}, {animateDarkness: false}).then(() => {
             SendColorChange(color);
         });
-    }
+	}
 }
+
 
 async function interpolateSceneColor(target="#FFFEFF")
 {    
@@ -100,32 +64,29 @@ const convertRGBHex = (r, g, b) => '#' + [r, g, b]
 function SendColorChange(color)
 {
     return new Promise(function(resolve) {
-        canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
-            CONFIG.Canvas.darknessColor = color;
-            game.socket.emit("module.dynamic-illumination", color);
-            canvas.getLayer("LightingLayer").update();
+        var convertedColor = PIXI.utils.string2hex(color);
+		canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
+            CONFIG.Canvas.darknessColor = convertedColor;
+            CONFIG.canvas.unexploredColor = convertedColor;
+            CONFIG.canvas.exploredColor = convertedColor;
+            game.socket.emit("module.dynamic-illumination");
+            canvas.getLayer("LightingLayer").refresh();
         }).then(() => {
             resolve()
         });
     });
 }
 
-function ReceiveColorChange(color)
+function ReceiveColorChange()
 {
-    CONFIG.Canvas.darknessColor = color;
-    canvas.getLayer("LightingLayer").update();
+    var convertedColor =  PIXI.utils.string2hex(canvas.scene.getFlag("dynamic-illumination","darknessColor"));
+    CONFIG.Canvas.darknessColor = convertedColor;
+    CONFIG.canvas.unexploredColor = convertedColor;
+    CONFIG.canvas.exploredColor = convertedColor;
+    canvas.getLayer("LightingLayer").refresh();
 }
 
 Hooks.on('ready', () => {game.socket.on('module.dynamic-illumination', ReceiveColorChange)});
-
-Hooks.on('updateScene', (scene, change, diff, token) => {
-    if(game.user.isGM && change.hasOwnProperty('darkness'))
-    {
-        var global = toggleGlobalLight(change.darkness);
-        if(global.hasOwnProperty("globalLight"))
-            scene.update(global)
-    }
-})
 
 Hooks.on('getSceneControlButtons', controls => {
     let control = controls.find(c => c.name === "lighting");
@@ -172,16 +133,16 @@ Hooks.on('getSceneControlButtons', controls => {
 
 Hooks.once("init", () => 
 {
-    game.settings.register("dynamic-illumination", "linkGlobalLight", {
+    /*game.settings.register("dynamic-illumination", "linkGlobalLight", {
 		name: game.i18n.localize("dynamic-illumination.linkGlobalLight.name"),
 		hint: game.i18n.localize("dynamic-illumination.linkGlobalLight.hint"),
 		scope: "world",
 		config: true,
 		default: true,
 		type: Boolean
-    });
+    });*/
 
-    game.settings.register("dynamic-illumination", "darknessThreshold", {
+    /*game.settings.register("dynamic-illumination", "darknessThreshold", {
         name: game.i18n.localize("dynamic-illumination.darknessThreshold.name"),
         hint: game.i18n.localize("dynamic-illumination.darknessThreshold.hint"),
         scope: "world",
@@ -189,7 +150,7 @@ Hooks.once("init", () =>
         default: 1.0,
         type: Number,
         range: {min: 0.0, max: 1.0, step: 0.05}
-    });
+    });*/
 
     game.settings.register("dynamic-illumination", "animateDarknessChange", {
 		name: game.i18n.localize("dynamic-illumination.animateDarknessChange.name"),
@@ -200,14 +161,14 @@ Hooks.once("init", () =>
 		type: Boolean
     });
 
-    game.settings.register("dynamic-illumination", "interpolateColor", {
+    /*game.settings.register("dynamic-illumination", "interpolateColor", {
 		name: game.i18n.localize("dynamic-illumination.interpolateColor.name"),
 		hint: game.i18n.localize("dynamic-illumination.interpolateColor.hint"),
 		scope: "world",
 		config: true,
 		default: false,
 		type: Boolean
-    });
+    });*/
 
     game.settings.register("dynamic-illumination", "animationColorChangeDelay", {
 		name: game.i18n.localize("dynamic-illumination.animationColorChangeDelay.name"),
@@ -326,7 +287,6 @@ Hooks.once("canvasInit", () => {
         if(CONFIG.Canvas.darknessColor != color)
         {
             ReceiveColorChange(color);
-
         }
     }
 });
