@@ -108,6 +108,7 @@ function SendColorChange(color)
                 CONFIG.Canvas.exploredColor = convertedColor;
                 canvas.sight.refresh();
             }
+
             game.socket.emit("module.dynamic-illumination");
             canvas.getLayer("LightingLayer").refresh();
         }).then(() => {
@@ -125,6 +126,7 @@ function ReceiveColorChange()
         CONFIG.Canvas.exploredColor = convertedColor;
         canvas.sight.refresh();
     }
+
     canvas.getLayer("LightingLayer").refresh();
 }
 

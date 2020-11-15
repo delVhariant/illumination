@@ -6,6 +6,7 @@
     "version": "0.7.7",
     "minimumCoreVersion": "0.7.6",
     "compatibleCoreVersion": "0.7.7",
+
     "scripts": ["scripts/dynamic-illumination.js"],
     "languages": [
 		{
@@ -18,4 +19,5 @@
     "url": "https://github.com/delVhariant/illumination",
     "manifest": "https://raw.githubusercontent.com/delVhariant/illumination/master/module.json",
     "download": "https://github.com/delVhariant/illumination/archive/0.7.7.zip"
+
   }
