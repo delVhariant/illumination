@@ -1,6 +1,36 @@
+class SceneColorChange
+{
+    constructor()
+    {
+        this.messageDialog = null;  
+    }
+
+    displayWindow()
+    {
+        var current = {"color": canvas.scene.getFlag("dynamic-illumination","darknessColor"), "darknessLevel": canvas.lighting.darknessLevel}
+        renderTemplate("modules/dynamic-illumination/templates/color_template.html", current).then((selections) => {
+          let d = new Dialog({
+            title: "Monologue",
+            content: selections,
+            buttons: {
+             select: {
+              icon: '<i class="fas fa-check"></i>',
+              label: "Change Color",
+              callback: () => {changeLighting($('#di-level').val(), $('#di-color').val())}
+             }
+            },
+            default: "select",
+            close: () => {console.log("This always is logged no matter which option is chosen")}
+           });
+           d.render(true);
+        });    
+    }
+}
+
+
 function changeLighting(level, color)
 {
-	if(game.settings.get("dynamic-illumination","animateDarknessChange"))
+    if(game.settings.get("dynamic-illumination","animateDarknessChange"))
 	{
 		canvas.scene.update({darkness: level}, {animateDarkness: true}).then(() => {
                 interpolateSceneColor(color)
@@ -16,12 +46,17 @@ function changeLighting(level, color)
 
 
 async function interpolateSceneColor(target="#FFFEFF")
-{    
+{   
+    if(canvas.scene.getFlag("dynamic-illumination","_animating"))
+        return
+    
     const interpolationData = [{
         parent: {interpolationSteps: 0},
         attribute: "interpolationSteps",
         to: 20
     }];
+
+    canvas.scene.setFlag("dynamic-illumination","_animating", true);
     return CanvasAnimation.animateLinear(interpolationData, {
         name: "lighting.darknessColor",
         duration: game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000,
@@ -34,8 +69,9 @@ async function interpolateSceneColor(target="#FFFEFF")
             } 
         }
     }).then(() => {
-         //Set it to the target at the end in case it wasn't there for some reason
-         SendColorChange(target);
+        canvas.scene.setFlag("dynamic-illumination","_animating", false);
+        //Set it to the target at the end in case it wasn't there for some reason
+        SendColorChange(target);
     }); 
 }
 
@@ -67,8 +103,11 @@ function SendColorChange(color)
         var convertedColor = PIXI.utils.string2hex(color);
 		canvas.scene.setFlag("dynamic-illumination","darknessColor", color).then(()=> {
             CONFIG.Canvas.darknessColor = convertedColor;
-            CONFIG.canvas.unexploredColor = convertedColor;
-            CONFIG.canvas.exploredColor = convertedColor;
+            if(game.settings.get("dynamic-illumination", "changeFogColor"))
+            {
+                CONFIG.Canvas.exploredColor = convertedColor;
+                canvas.sight.refresh();
+            }
             game.socket.emit("module.dynamic-illumination");
             canvas.getLayer("LightingLayer").refresh();
         }).then(() => {
@@ -81,8 +120,11 @@ function ReceiveColorChange()
 {
     var convertedColor =  PIXI.utils.string2hex(canvas.scene.getFlag("dynamic-illumination","darknessColor"));
     CONFIG.Canvas.darknessColor = convertedColor;
-    CONFIG.canvas.unexploredColor = convertedColor;
-    CONFIG.canvas.exploredColor = convertedColor;
+    if(game.settings.get("dynamic-illumination", "changeFogColor"))
+    {
+        CONFIG.Canvas.exploredColor = convertedColor;
+        canvas.sight.refresh();
+    }
     canvas.getLayer("LightingLayer").refresh();
 }
 
@@ -123,6 +165,20 @@ Hooks.on('getSceneControlButtons', controls => {
             visible: game.settings.get("dynamic-illumination", "showDawnDusk"),
             onClick: () => {changeLighting(game.settings.get("dynamic-illumination","duskLevel"), game.settings.get("dynamic-illumination","duskColor"))}
         });
+
+        control.tools.splice(nightButton+2, 0, {
+            name: "custom",
+            title: "Set to Custom",
+            icon: "fas fa-sliders-h",
+            visible: game.settings.get("dynamic-illumination", "showDawnDusk"),
+            onClick: () => {
+                
+                if(!colorChange)
+                    var colorChange = new SceneColorChange();
+
+                colorChange.displayWindow()
+            }
+        });
     }
     else
     {
@@ -133,6 +189,8 @@ Hooks.on('getSceneControlButtons', controls => {
 
 Hooks.once("init", () => 
 {
+    loadTemplates(["modules/dynamic-illumination/templates/color_template.html"]); // Load the popup template
+    
     /*game.settings.register("dynamic-illumination", "linkGlobalLight", {
 		name: game.i18n.localize("dynamic-illumination.linkGlobalLight.name"),
 		hint: game.i18n.localize("dynamic-illumination.linkGlobalLight.hint"),
@@ -161,14 +219,14 @@ Hooks.once("init", () =>
 		type: Boolean
     });
 
-    /*game.settings.register("dynamic-illumination", "interpolateColor", {
-		name: game.i18n.localize("dynamic-illumination.interpolateColor.name"),
-		hint: game.i18n.localize("dynamic-illumination.interpolateColor.hint"),
+    game.settings.register("dynamic-illumination", "changeFogColor", {
+		name: game.i18n.localize("dynamic-illumination.changeFogColor.name"),
+		hint: game.i18n.localize("dynamic-illumination.changeFogColor.hint"),
 		scope: "world",
 		config: true,
 		default: false,
 		type: Boolean
-    });*/
+    });
 
     game.settings.register("dynamic-illumination", "animationColorChangeDelay", {
 		name: game.i18n.localize("dynamic-illumination.animationColorChangeDelay.name"),

@@ -1,0 +1,26 @@
+<div class="form-group">
+<label>Darkness Level</label>
+<div class="form-fields">
+<input type="range" id="di-level" name="darknessLevel" value="{{darknessLevel}}" min="0" max="1" step="0.05" data-dtype="Number">
+<span class="range-value" id="di-level-display">{{darknessLevel}}</span>
+</div>
+</div>
+<div class="form-group">
+<label>Scene Color</label>
+<div class="form-fields">
+<input type="text" id="di-color-text" name="sceneColor" value="{{color}}" data-dtype="String">
+<input type="color" id="di-color" value="{{color}}" data-edit="sceneColor">
+</div>
+</div>
+<script>
+
+$("#di-level").change(function() {
+  $("#di-level-display").html($(this).val());
+});
+$("#di-color-text").change(function() {
+  $("#di-color").val($(this).val());
+})
+$("#di-color").change(function() {
+  $("#di-color-text").val($(this).val());
+})
+</script>
