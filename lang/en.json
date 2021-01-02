@@ -27,5 +27,7 @@
     "dynamic-illumination.dayColor.name": "Day Color", 
     "dynamic-illumination.dayColor.hint": "The lighting overlay color for Day. Use hex color reference (ie: #FFFEFE)",
     "dynamic-illumination.dayLevel.name": "Day Darkness Level", 
-    "dynamic-illumination.dayLevel.hint": "The darkness level to set when Day is selected. If global illumination linking is enabled this will determine whether it is off at Day."
+    "dynamic-illumination.dayLevel.hint": "The darkness level to set when Day is selected. If global illumination linking is enabled this will determine whether it is off at Day.",
+    "dynamic-illumination.allowInterrupt.name": "Allow Interrupt (Expermental)", 
+    "dynamic-illumination.allowInterrupt.hint": "Whether or not to allow interrupting an in flight change with a new change. May result in incorrect color/darkness level"
 }

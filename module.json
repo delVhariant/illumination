@@ -3,9 +3,9 @@
     "title": "Dynamic Illumination",
     "description": "Adds additional setting for lighting time of day color, additional lighting 'times' (Dawn/Dusk)",
     "author": "delVhar",
-    "version": "0.7.7",
+    "version": "0.9.0",
     "minimumCoreVersion": "0.7.6",
-    "compatibleCoreVersion": "0.7.7",
+    "compatibleCoreVersion": "0.7.9",
 
     "scripts": ["scripts/dynamic-illumination.js"],
     "languages": [
@@ -18,6 +18,6 @@
     "socket": true,
     "url": "https://github.com/delVhariant/illumination",
     "manifest": "https://raw.githubusercontent.com/delVhariant/illumination/master/module.json",
-    "download": "https://github.com/delVhariant/illumination/archive/0.7.7.zip"
+    "download": "https://github.com/delVhariant/illumination/archive/v0.9.0.zip"
 
   }
