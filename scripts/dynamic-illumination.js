@@ -51,7 +51,7 @@ function changeLighting(level, color)
             }
             else
             {
-                ui.notifications.notify('Scene color/darkness already animating', "warning");
+                ui.notifications.notify('Scene color/darkness already animating. You can enable interrupting ongiong changes in settings.', "warning");
                 return;
             }
 		}
@@ -241,7 +241,7 @@ Hooks.once("init", () =>
 		hint: game.i18n.localize("dynamic-illumination.allowInterrupt.hint"),
 		scope: "world",
 		config: true,
-		default: true,
+		default: false,
 		type: Boolean
     });
 
