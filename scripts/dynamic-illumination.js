@@ -30,9 +30,33 @@ class SceneColorChange
 
 function changeLighting(level, color)
 {
+    //console.log(`Called with col: ${color} and level: ${level}`);
+    
     if(game.settings.get("dynamic-illumination","animateDarknessChange"))
 	{
-		canvas.scene.update({darkness: level}, {animateDarkness: true}).then(() => {
+        if(canvas.getLayer("LightingLayer")._animating || canvas.scene.getFlag("dynamic-illumination","_animating"))
+		{
+            
+            if(game.settings.get("dynamic-illumination","allowInterrupt"))
+            {
+                // An attempt to gracefully interrupt ongoing changes that doesn't quite work correctly.
+                // console.log(CanvasAnimation.animations)
+                // console.log("Cancelling darkness animation");
+                CanvasAnimation.terminateAnimation("lighting.animateDarkness");
+                CanvasAnimation.terminateAnimation("lighting.darknessColor")
+                canvas.getLayer("LightingLayer")._animating = false;
+                canvas.scene.setFlag("dynamic-illumination","_animating", false);
+                // console.log(CanvasAnimation.animations)
+                // console.log(canvas.getLayer("LightingLayer")._animating);
+            }
+            else
+            {
+                ui.notifications.notify('Scene color/darkness already animating', "warning");
+                return;
+            }
+		}
+        
+        canvas.scene.update({darkness: level}, {animateDarkness: true}).then(() => {
                 interpolateSceneColor(color)
             });
 	}
@@ -47,32 +71,31 @@ function changeLighting(level, color)
 
 async function interpolateSceneColor(target="#FFFEFF")
 {   
-    if(canvas.scene.getFlag("dynamic-illumination","_animating"))
-        return
-    
-    const interpolationData = [{
-        parent: {interpolationSteps: 0},
-        attribute: "interpolationSteps",
-        to: 20
-    }];
+	const interpolationData = [{
+		parent: {interpolationSteps: 0},
+		attribute: "interpolationSteps",
+		to: 20
+	}];
 
-    canvas.scene.setFlag("dynamic-illumination","_animating", true);
-    return CanvasAnimation.animateLinear(interpolationData, {
-        name: "lighting.darknessColor",
-        duration: game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000,
-        ontick: (dt, attributes) => {
-            color = interpolateColor(canvas.scene.getFlag("dynamic-illumination","darknessColor"), target, attributes[0].parent.interpolationSteps/attributes[0].to)
-            // Only update if we actually changed color
-            if(color.toLowerCase() != canvas.scene.getFlag("dynamic-illumination","darknessColor").toLowerCase())
-            {                
-                SendColorChange(color);
-            } 
-        }
-    }).then(() => {
-        canvas.scene.setFlag("dynamic-illumination","_animating", false);
-        //Set it to the target at the end in case it wasn't there for some reason
-        SendColorChange(target);
-    }); 
+	canvas.scene.setFlag("dynamic-illumination","_animating", true);
+	return CanvasAnimation.animateLinear(interpolationData, {
+		name: "lighting.darknessColor",
+		duration: game.settings.get("dynamic-illumination","animationColorChangeDelay") * 1000,
+		ontick: (dt, attributes) => {
+			color = interpolateColor(canvas.scene.getFlag("dynamic-illumination","darknessColor"), target, attributes[0].parent.interpolationSteps/attributes[0].to)
+			// Only update if we actually changed color
+			if(color.toLowerCase() != canvas.scene.getFlag("dynamic-illumination","darknessColor").toLowerCase())
+			{                
+				SendColorChange(color);
+			} 
+		}
+	}).then(() => {
+		canvas.scene.setFlag("dynamic-illumination","_animating", false);
+		//Set it to the target at the end in case it wasn't there for some reason
+		SendColorChange(target);
+		console.log("finished color change");
+	}); 
+	
 }
 
 function interpolateColor(color1, color2, factor) {
@@ -108,7 +131,6 @@ function SendColorChange(color)
                 CONFIG.Canvas.exploredColor = convertedColor;
                 canvas.sight.refresh();
             }
-
             game.socket.emit("module.dynamic-illumination");
             canvas.getLayer("LightingLayer").refresh();
         }).then(() => {
@@ -126,7 +148,6 @@ function ReceiveColorChange()
         CONFIG.Canvas.exploredColor = convertedColor;
         canvas.sight.refresh();
     }
-
     canvas.getLayer("LightingLayer").refresh();
 }
 
@@ -142,12 +163,13 @@ Hooks.on('getSceneControlButtons', controls => {
     if(dayButton)
     {
         control.tools[dayButton].onClick = () => {changeLighting(game.settings.get("dynamic-illumination","dayLevel"), game.settings.get("dynamic-illumination","dayColor"))};
-        control.tools.splice(dayButton, 0, {
+		control.tools.splice(dayButton, 0, {
             name: "dawn",
             title: "Transition to Dawn",
             icon: "far fa-sun",
             visible: game.settings.get("dynamic-illumination", "showDawnDusk"),
-            onClick: () => {changeLighting(game.settings.get("dynamic-illumination","dawnLevel"), game.settings.get("dynamic-illumination","dawnColor"))}
+            onClick: () => {changeLighting(game.settings.get("dynamic-illumination","dawnLevel"), game.settings.get("dynamic-illumination","dawnColor"))},
+			button: true
         });
     }
     else
@@ -165,7 +187,8 @@ Hooks.on('getSceneControlButtons', controls => {
             title: "Transition to Dusk",
             icon: "far fa-moon",
             visible: game.settings.get("dynamic-illumination", "showDawnDusk"),
-            onClick: () => {changeLighting(game.settings.get("dynamic-illumination","duskLevel"), game.settings.get("dynamic-illumination","duskColor"))}
+            onClick: () => {changeLighting(game.settings.get("dynamic-illumination","duskLevel"), game.settings.get("dynamic-illumination","duskColor"))},
+			button: true
         });
 
         control.tools.splice(nightButton+2, 0, {
@@ -179,7 +202,8 @@ Hooks.on('getSceneControlButtons', controls => {
                     var colorChange = new SceneColorChange();
 
                 colorChange.displayWindow()
-            }
+            },
+			button: true
         });
     }
     else
@@ -211,6 +235,15 @@ Hooks.once("init", () =>
         type: Number,
         range: {min: 0.0, max: 1.0, step: 0.05}
     });*/
+
+    game.settings.register("dynamic-illumination", "allowInterrupt", {
+		name: game.i18n.localize("dynamic-illumination.allowInterrupt.name"),
+		hint: game.i18n.localize("dynamic-illumination.allowInterrupt.hint"),
+		scope: "world",
+		config: true,
+		default: true,
+		type: Boolean
+    });
 
     game.settings.register("dynamic-illumination", "animateDarknessChange", {
 		name: game.i18n.localize("dynamic-illumination.animateDarknessChange.name"),
@@ -328,11 +361,12 @@ Hooks.once("init", () =>
 
 })
 
-Hooks.once("canvasInit", () => {
+Hooks.on("canvasReady", () => {
     var color = canvas.scene.getFlag("dynamic-illumination","darknessColor");
     if(game.user.isGM)
     {
         canvas.scene.unsetFlag("core","darknessColor");  // Delete darknessColor Flag to clean up old usage...Replace this with a button in options?
+        canvas.scene.setFlag("dynamic-illumination","_animating", false); // Get rid of any left over animating flags
         // Set Canvas Darkness color to match flag
         
         if(color == undefined)
