@@ -1,23 +1,37 @@
 {
-    "name": "dynamic-illumination",
-    "title": "Dynamic Illumination",
-    "description": "Adds additional setting for lighting time of day color, additional lighting 'times' (Dawn/Dusk)",
-    "author": "delVhar",
-    "version": "0.9.0",
-    "minimumCoreVersion": "0.7.6",
-    "compatibleCoreVersion": "0.7.9",
-
-    "scripts": ["scripts/dynamic-illumination.js"],
-    "languages": [
-		{
-			"lang": "en",
-			"name": "English",
-			"path": "lang/en.json"
-        }
-    ],
-    "socket": true,
-    "url": "https://github.com/delVhariant/illumination",
-    "manifest": "https://raw.githubusercontent.com/delVhariant/illumination/master/module.json",
-    "download": "https://github.com/delVhariant/illumination/archive/v0.9.0.zip"
-
-  }
+  "id": "dynamic-illumination",
+  "name": "dynamic-illumination",
+  "title": "Dynamic Illumination",
+  "description": "Adds additional setting for lighting time of day color, additional lighting 'times' (Dawn/Dusk)",
+  "version": "0.10.0",
+  "author": "delVhar",
+  "authors": [
+    {
+      "name": "delVhar",
+      "url": "https://github.com/delVhariant"
+    },
+    {
+      "name": "brikbot",
+      "url": "https://github.com/brikbot"
+    }
+  ],
+  "minimumCoreVersion": 9,
+  "compatibleCoreVersion": 10.291,
+  "compatibility": {
+    "minimum": 9,
+    "verified": 10.291,
+    "maximum": 12
+  },
+  "scripts": [ "scripts/dynamic-illumination.js" ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "socket": true,
+  "url": "https://github.com/delVhariant/illumination",
+  "manifest": "https://raw.githubusercontent.com/delVhariant/illumination/master/module.json",
+  "download": "https://github.com/delVhariant/illumination/archive/v0.10.0.zip"
+}
